@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'product',
     'shipping',
     'my_email',
+    'inventory',
 ]
 
 MIDDLEWARE = [
