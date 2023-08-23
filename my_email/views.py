@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.mail import send_mail
@@ -6,7 +7,14 @@ from .serializers import MyEmailDetailSerializer
 
 @api_view(['GET'])
 def get_my_email_list(request):
-    query_set = MyEmailDetail.objects.all()
+    search_query = request.GET.get('search', '')
+    query_set = MyEmailDetail.objects.filter(
+        Q(recipient__icontains=search_query) |
+        Q(subject__icontains=search_query) |
+        Q(body__icontains=search_query)
+    ).order_by('-id')
+    # query_set = MyEmailDetail.objects.all().order_by('-id') # order by id in descending order
+    
     serializer = MyEmailDetailSerializer(query_set, many=True)
     return Response(serializer.data)
 

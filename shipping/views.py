@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import ShippingDetail
@@ -5,7 +6,17 @@ from .serializers import ShippingDetailSerializer
 
 @api_view(['GET'])
 def get_shipping_list(request):
-    query_set = ShippingDetail.objects.all()
+    search_query = request.GET.get('search', '')
+    query_set = ShippingDetail.objects.filter(
+        Q(street_address__icontains=search_query) |
+        Q(city__icontains=search_query) |
+        Q(state__icontains=search_query) |
+        Q(zipcode__icontains=search_query) |
+        Q(customer_name__icontains=search_query) |
+        Q(customer_email__icontains=search_query)
+    ).order_by('-id')
+    # query_set = ShippingDetail.objects.all().order_by('-id') # order by id in descending order
+    
     serializer = ShippingDetailSerializer(query_set, many=True)
     return Response(serializer.data)
 
@@ -38,9 +49,15 @@ def delete_shipping(request, shipping_id):
 @api_view(['PUT'])
 def update_shipping(request, shipping_id):
     existingItem = ShippingDetail.objects.get(id=shipping_id)
-    existingItem.name = request.data.get("name")
-    # existingItem.description = request.data.get("description")
-    existingItem.image_name = request.data.get("image_name")
+
+    existingItem.product_detail_id = request.data.get('product_detail')
+    existingItem.street_address = request.data.get('street_address')
+    existingItem.city = request.data.get('city')
+    existingItem.state = request.data.get('state')
+    existingItem.zipcode = request.data.get('zipcode')
+    existingItem.customer_name = request.data.get('customer_name')
+    existingItem.customer_email = request.data.get('customer_email')
+
     existingItem.save()
     serializer = ShippingDetailSerializer(instance=existingItem)
     return Response(serializer.data) 
