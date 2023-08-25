@@ -40,7 +40,7 @@ def delete_product(request, product_id):
 def update_product(request, product_id):
     existingItem = ProductDetail.objects.get(id=product_id)
     existingItem.name = request.data.get("name")
-    # existingItem.image_name = request.data.get("image_name")
+    existingItem.image_name = request.data.get("image_name")
     existingItem.save()
     serializer = ProductDetailSerializer(instance=existingItem)
     return Response(serializer.data) 

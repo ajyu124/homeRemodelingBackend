@@ -10,10 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+"""
+MEDIA_ROOT is the absolute filesystem path to the directory where your media files will be stored. 
+It's the physical location on your server's filesystem where uploaded media files will be saved. 
+"""
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+"""
+MEDIA_URL is the base URL that will be used to serve media files. 
+"""
+MEDIA_URL = '/media/'
+
+"""
+e.g. you have an image named my_image.jpg in your MEDIA_ROOT, 
+you would access it in your views using the URL '/media/my_image.jpg'
+"""
+
 
 
 # Quick-start development settings - unsuitable for production

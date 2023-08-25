@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from product.models import ProductDetail
 
@@ -8,6 +9,7 @@ class ShippingDetail(models.Model):
     state = models.CharField(max_length=255, null=True, blank=True)
     zipcode = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically populated on creation
+    last_modified = models.DateTimeField(default=timezone.now)
 
     customer_name = models.CharField(max_length=255, null=True, blank=True)
     customer_email = models.CharField(max_length=255, null=True, blank=True)
@@ -16,3 +18,7 @@ class ShippingDetail(models.Model):
     
     def __str__(self):
         return self.street_address
+    
+    def save(self, *args, **kwargs):
+        self.last_modified = timezone.now()
+        return super().save(*args, **kwargs)
